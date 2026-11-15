@@ -145,7 +145,7 @@
       } else if (stage === "compile") { p = 62; msg = "Preparing the game code (this uses your CPU for a bit)…"; }
       else if (stage === "boot") {
         const mb = bootBytes / 1048576;
-        p = 65 + 30 * Math.min(1, mb / BOOT_MB);
+        p = 65 + Math.max(30 * Math.min(1, mb / BOOT_MB), 28 * (1 - Math.exp(-(performance.now() - bootT0) / 1000 / 50)));
         msg = pres < 2 ? "Starting the game engine and loading game files: " + Math.round(mb) + " MB so far…" : "Almost there — loading the menu…";
         if (pres >= 2) p = Math.max(p, 96);
       } else if (stage === "error") p = shown;
