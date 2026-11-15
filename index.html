@@ -180,7 +180,7 @@
       if (stage !== "error") line.textContent = msg + "  ·  " + fmt(secs) + " elapsed";
       if (pres >= 40 && stage !== "error") {
         finished = true; fill.style.width = "100%"; pct.textContent = "100%";
-        box.classList.add("done"); setTimeout(() => { const b = document.getElementById("maxres"); if (b) document.body.appendChild(b); box.remove(); }, 800);
+        box.classList.add("done"); setTimeout(() => box.remove(), 800);
       }
     }, 300);
   })();
