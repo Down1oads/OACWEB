@@ -14,16 +14,14 @@
   #status { position: fixed; left: 16px; bottom: 12px; font: 13px system-ui, sans-serif; color: #9a9a9a; pointer-events: none; }
   #fps { position: fixed; left: 8px; top: 6px; font: 600 13px ui-monospace, Consolas, monospace; color: #e8e8e8; background: #000a;
          padding: 2px 6px; border-radius: 4px; pointer-events: none; display: none; }
-  #load { position: fixed; inset: 0; z-index: 50; background: radial-gradient(circle at 50% 35%, #1d2a3a, #07090c 70%); display: flex; flex-direction: column;
+  #load { position: fixed; inset: 0; z-index: 50; background: #000; display: flex; flex-direction: column;
           align-items: center; justify-content: center; font-family: system-ui, "Segoe UI", sans-serif; color: #e9eef5; transition: opacity .6s; }
   #load.done { opacity: 0; pointer-events: none; }
-  #load h1 { margin: 0 0 4px; font-size: clamp(26px, 5vw, 46px); letter-spacing: .5px; }
-  #load .sub { margin: 0 0 28px; opacity: .65; font-size: clamp(13px, 2vw, 16px); }
+  #load h1 { margin: 0 0 28px; font-size: clamp(26px, 5vw, 46px); letter-spacing: .5px; }
   #load .bar { width: min(560px, 82vw); height: 16px; border-radius: 9px; background: #ffffff1c; overflow: hidden; }
   #load .fill { height: 100%; width: 0; border-radius: 9px; background: linear-gradient(90deg, #2f7bff, #5ec2ff); transition: width .35s; }
   #load .pct { margin-top: 12px; font-size: 22px; font-weight: 700; }
   #load .line { margin-top: 6px; font-size: 14px; opacity: .85; min-height: 1.3em; text-align: center; padding: 0 16px; }
-  #load .tip { margin-top: 26px; font-size: 12.5px; opacity: .5; max-width: min(560px, 82vw); text-align: center; line-height: 1.5; }
   #load.err .line { color: #ff8d8d; opacity: 1; }
 </style>
 </head>
@@ -31,9 +29,8 @@
 <canvas id="canvas" width="1280" height="720" tabindex="0"></canvas>
 <div id="status">Loading…</div>
 <div id="fps"></div>
-<div id="load"><h1>One-armed Cook</h1><div class="sub">Browser port</div><div class="bar"><div class="fill" id="loadfill"></div></div>
-<div class="pct" id="loadpct">0%</div><div class="line" id="loadline">Starting…</div>
-<div class="tip">The first visit downloads about 450 MB of game code and takes a few minutes; the page stays black for up to a minute at the end while the game engine starts. Later visits are much faster.</div></div>
+<div id="load"><h1>One-armed Cook</h1><div class="bar"><div class="fill" id="loadfill"></div></div>
+<div class="pct" id="loadpct">0%</div><div class="line" id="loadline">Starting…</div></div>
 <script>
   // frame counter: Ctrl+Shift+F toggles it (remembered), ?fps=1 or ?fps=0 in the address overrides
   (() => {
