@@ -9545,6 +9545,7 @@ function _web_input_init() {
   };
   const generic = k => k === 160 || k === 161 ? 16 : k === 162 || k === 163 ? 17 : k === 164 || k === 165 ? 18 : 0;
   const key = down => e => {
+    if (e.code === "F11") return; // leave F11 to the browser (fullscreen)
     const k = vk(e);
     if (!k) return;
     e.preventDefault();
