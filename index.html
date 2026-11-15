@@ -27,7 +27,7 @@
   #maxres { position: fixed; right: 10px; top: 8px; z-index: 60; font: 600 12.5px system-ui, "Segoe UI", sans-serif; color: #fff; background: #000a;
             border: 1px solid #ffffff40; border-radius: 6px; padding: 5px 10px; cursor: pointer; opacity: .45; transition: opacity .2s; }
   #maxres:hover { opacity: 1; }
-  html:has(#load) #maxres { opacity: .95; font-size: 14px; padding: 7px 14px; }
+  #load #maxres { position: static; margin-top: 20px; opacity: .95; font-size: 14px; padding: 7px 14px; }
   #maxres.on { background: #1b5fd6cc; opacity: .8; }
 </style>
 </head>
@@ -143,6 +143,7 @@
   (() => {
     const box = document.getElementById("load"), fill = document.getElementById("loadfill"), pct = document.getElementById("loadpct"),
           line = document.getElementById("loadline"), st = document.getElementById("status");
+    { const mb = document.getElementById("maxres"); if (mb) box.appendChild(mb); }
     const CODE_MB = 448, BOOT_MB = 280, t0 = performance.now();
     let stage = "setup", codeMB = 0, codeT0 = 0, bootBytes = 0, bootT0 = 0, shown = 0, finished = false;
     const fmt = s => { s = Math.max(0, Math.round(s)); return Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); };
@@ -179,7 +180,7 @@
       if (stage !== "error") line.textContent = msg + "  ·  " + fmt(secs) + " elapsed";
       if (pres >= 40 && stage !== "error") {
         finished = true; fill.style.width = "100%"; pct.textContent = "100%";
-        box.classList.add("done"); setTimeout(() => box.remove(), 800);
+        box.classList.add("done"); setTimeout(() => { const b = document.getElementById("maxres"); if (b) document.body.appendChild(b); box.remove(); }, 800);
       }
     }, 300);
   })();
