@@ -23,12 +23,18 @@
   #load .pct { margin-top: 12px; font-size: 22px; font-weight: 700; }
   #load .line { margin-top: 6px; font-size: 14px; opacity: .85; min-height: 1.3em; text-align: center; padding: 0 16px; }
   #load.err .line { color: #ff8d8d; opacity: 1; }
+  html.maxres canvas { width: 100%; height: 100%; max-width: none; max-height: none; aspect-ratio: auto; }
+  #maxres { position: fixed; right: 10px; top: 8px; z-index: 40; font: 600 12.5px system-ui, "Segoe UI", sans-serif; color: #fff; background: #000a;
+            border: 1px solid #ffffff40; border-radius: 6px; padding: 5px 10px; cursor: pointer; opacity: .45; transition: opacity .2s; }
+  #maxres:hover { opacity: 1; }
+  #maxres.on { background: #1b5fd6cc; opacity: .8; }
 </style>
 </head>
 <body>
 <canvas id="canvas" width="1280" height="720" tabindex="0"></canvas>
 <div id="status">Loading…</div>
 <div id="fps"></div>
+<button id="maxres" type="button" title="Render at your screen's full resolution (reloads the game)">Max resolution: Off</button>
 <div id="load"><h1>One-armed Cook</h1><div class="bar"><div class="fill" id="loadfill"></div></div>
 <div class="pct" id="loadpct">0%</div><div class="line" id="loadline">Starting…</div></div>
 <script>
@@ -63,10 +69,31 @@
   })();
 </script>
 <script>
+  // max resolution toggle: renders at the window's real pixel size (sharper, but needs a stronger GPU). Applied on reload.
+  (() => {
+    let on = false;
+    try { on = localStorage.getItem("oacMaxRes") === "1"; } catch (e) {}
+    const q = new URLSearchParams(location.search).get("maxres");
+    if (q !== null) on = q === "1";
+    window.__maxres = on;
+    if (on) document.documentElement.classList.add("maxres");
+    const b = document.getElementById("maxres");
+    b.textContent = "Max resolution: " + (on ? "On" : "Off");
+    b.classList.toggle("on", on);
+    b.addEventListener("click", () => {
+      if (!confirm("Turn max resolution " + (on ? "off" : "on") + "? The game will reload (unsaved progress is lost).")) return;
+      try { localStorage.setItem("oacMaxRes", on ? "0" : "1"); } catch (e) {}
+      location.href = location.pathname + location.search.replace(/[?&]maxres=[01]/, "").replace(/^&/, "?");
+    });
+    document.addEventListener("pointerlockchange", () => { b.style.display = document.pointerLockElement ? "none" : ""; });
+  })();
+</script>
+<script>
   const status = document.getElementById("status");
   const parts = ["game.wasm.0", "game.wasm.1", "game.wasm.2", "game.wasm.3", "game.wasm.4", "game.wasm.5", "game.wasm.6", "game.wasm.7", "game.wasm.8", "game.wasm.9", "game.wasm.10", "game.wasm.11", "game.wasm.12", "game.wasm.13", "game.wasm.14", "game.wasm.15", "game.wasm.16", "game.wasm.17", "game.wasm.18"];
   var Module = {
     canvas: document.getElementById("canvas"),
+    uewAutoSize: !!window.__maxres,
     arguments: ["--image", "/image.bin", "--root", "/game", "--save", "/save/OAC-Win64-Shipping", "--exe", "OAC/Binaries/Win64/OAC-Win64-Shipping.exe", "-dx11"].concat(new URLSearchParams(location.search).getAll("arg")),
     uewSave: "/save/OAC-Win64-Shipping",
     uewSeed: {"Users/Player/AppData/Local/OAC/Saved/Config/Windows/GameUserSettings.ini": "[ScalabilityGroups]\nsg.ShadowQuality=1\nsg.PostProcessQuality=0\nsg.EffectsQuality=0\nsg.FoliageQuality=0\nsg.ViewDistanceQuality=0\nsg.AntiAliasingQuality=0\nsg.ReflectionQuality=0\nsg.GlobalIlluminationQuality=0\nsg.ShadingQuality=0\nsg.LandscapeQuality=0\nsg.TextureQuality=0\n", "Users/Player/AppData/Local/OAC/Saved/Config/WindowsNoEditor/GameUserSettings.ini": "[ScalabilityGroups]\nsg.ShadowQuality=1\nsg.PostProcessQuality=0\nsg.EffectsQuality=0\nsg.FoliageQuality=0\nsg.ViewDistanceQuality=0\nsg.AntiAliasingQuality=0\nsg.ReflectionQuality=0\nsg.GlobalIlluminationQuality=0\nsg.ShadingQuality=0\nsg.LandscapeQuality=0\nsg.TextureQuality=0\n", "Users/Player/AppData/Local/OAC/Saved/Config/Windows/Scalability.ini": "[PostProcessQuality@0]\nr.EyeAdaptationQuality=2\nr.Tonemapper.Quality=5\n[PostProcessQuality@1]\nr.EyeAdaptationQuality=2\nr.Tonemapper.Quality=5\n", "Users/Player/AppData/Local/OAC/Saved/Config/WindowsNoEditor/Scalability.ini": "[PostProcessQuality@0]\nr.EyeAdaptationQuality=2\nr.Tonemapper.Quality=5\n[PostProcessQuality@1]\nr.EyeAdaptationQuality=2\nr.Tonemapper.Quality=5\n"},
