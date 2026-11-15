@@ -14,31 +14,12 @@
   #status { position: fixed; left: 16px; bottom: 12px; font: 13px system-ui, sans-serif; color: #9a9a9a; pointer-events: none; }
   #fps { position: fixed; left: 8px; top: 6px; font: 600 13px ui-monospace, Consolas, monospace; color: #e8e8e8; background: #000a;
          padding: 2px 6px; border-radius: 4px; pointer-events: none; display: none; }
-  #credit { position: fixed; display: none; font: 700 15px "Comic Sans MS", "Comic Sans", "Chalkboard SE", "Comic Neue", cursive; color: #fff; text-shadow: 0 1px 3px #000, 0 0 6px #000; text-align: center; transform: translateX(-50%);
-            line-height: 1.35; pointer-events: none; white-space: nowrap; }
-  #credit small { display: block; font-weight: 700; font-size: .88em; opacity: .95; }
 </style>
 </head>
 <body>
 <canvas id="canvas" width="1280" height="720" tabindex="0"></canvas>
 <div id="status">Loading…</div>
 <div id="fps"></div>
-<div id="credit">Ported By Down1oads<small>slyr.pages.dev</small></div>
-<script>
-  // credit under the menu logo: follows the canvas, hidden while the mouse is captured (in game)
-  (() => {
-    const el = document.getElementById("credit"), cv = document.getElementById("canvas");
-    const place = () => {
-      const r = cv.getBoundingClientRect();
-      el.style.left = Math.round(r.left + r.width * 0.858) + "px";
-      el.style.top = Math.round(r.top + r.height * 0.572) + "px";
-      el.style.fontSize = Math.max(11, Math.round(r.width * 0.0105)) + "px";
-      el.style.display = document.pointerLockElement === cv || (window.Module && (Module.uewPresents | 0) < 2) ? "none" : "block";
-    };
-    setInterval(place, 250);
-    addEventListener("resize", place);
-  })();
-</script>
 <script>
   // frame counter: Ctrl+Shift+F toggles it (remembered), ?fps=1 or ?fps=0 in the address overrides
   (() => {
