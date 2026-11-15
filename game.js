@@ -9591,7 +9591,7 @@ function _web_input_init() {
   window.addEventListener("blur", () => q.push([ 8, 0, 0, 0, 0 ]));
   // the render size is fixed by the page unless it opts into following the window
   if (Module.uewAutoSize) new ResizeObserver(() => {
-    const w = Math.max(1, Math.round(canvas.clientWidth * devicePixelRatio)), h = Math.max(1, Math.round(canvas.clientHeight * devicePixelRatio));
+    const sc = window.__resScale || 1, w = Math.max(1, Math.round(canvas.clientWidth * devicePixelRatio * sc)), h = Math.max(1, Math.round(canvas.clientHeight * devicePixelRatio * sc));
     if (w !== canvas.width || h !== canvas.height) {
       canvas.width = w;
       canvas.height = h;

@@ -35,7 +35,7 @@
 <canvas id="canvas" width="1280" height="720" tabindex="0"></canvas>
 <div id="status">Loading…</div>
 <div id="fps"></div>
-<button id="maxres" type="button" title="Render at your screen's full resolution (reloads the game)">Max resolution: Off</button>
+<button id="maxres" type="button" title="Change the render resolution (reloads the game)">Resolution: Normal</button>
 <div id="load"><h1>One-armed Cook</h1><div class="bar"><div class="fill" id="loadfill"></div></div>
 <div class="pct" id="loadpct">0%</div><div class="line" id="loadline">Starting…</div></div>
 <script>
@@ -70,23 +70,26 @@
   })();
 </script>
 <script>
-  // max resolution toggle: renders at the window's real pixel size (sharper, but needs a stronger GPU). Applied on reload.
+  // resolution selector: Low (half the pixels, fastest), Normal (1280x720), Max (the window's real pixel size). Applied on reload.
   (() => {
-    let on = false;
-    try { on = localStorage.getItem("oacMaxRes") === "1"; } catch (e) {}
-    const q = new URLSearchParams(location.search).get("maxres");
-    if (q !== null) on = q === "1";
-    window.__maxres = on;
-    if (on) document.documentElement.classList.add("maxres");
+    const modes = ["low", "normal", "max"], names = { low: "Low", normal: "Normal", max: "Max" };
+    let mode = "normal";
+    try { const v = localStorage.getItem("oacRes"); if (modes.includes(v)) mode = v; else if (localStorage.getItem("oacMaxRes") === "1") mode = "max"; } catch (e) {}
+    const q = new URLSearchParams(location.search), qr = q.get("res"), qm = q.get("maxres");
+    if (modes.includes(qr)) mode = qr; else if (qm !== null) mode = qm === "1" ? "max" : "normal";
+    window.__maxres = mode !== "normal";
+    window.__resScale = mode === "low" ? 0.5 : 1;
+    if (mode !== "normal") document.documentElement.classList.add("maxres");
     const b = document.getElementById("maxres");
-    b.textContent = "Max resolution: " + (on ? "On" : "Off");
-    b.classList.toggle("on", on);
+    b.textContent = "Resolution: " + names[mode];
+    b.classList.toggle("on", mode !== "normal");
+    b.title = "Click to change: Low (fastest) / Normal / Max (sharpest). Reloads the game.";
     b.addEventListener("click", () => {
-      if (!document.getElementById("load") && !confirm("Turn max resolution " + (on ? "off" : "on") + "? The game will reload (unsaved progress is lost).")) return;
-      try { localStorage.setItem("oacMaxRes", on ? "0" : "1"); } catch (e) {}
-      location.href = location.pathname + location.search.replace(/[?&]maxres=[01]/, "").replace(/^&/, "?");
+      const next = modes[(modes.indexOf(mode) + 1) % 3];
+      if (!document.getElementById("load") && !confirm("Switch resolution to " + names[next] + "? The game will reload (unsaved progress is lost).")) return;
+      try { localStorage.setItem("oacRes", next); } catch (e) {}
+      location.href = location.pathname + location.search.replace(/[?&](res|maxres)=[a-z01]+/g, "").replace(/^&/, "?");
     });
-    document.addEventListener("pointerlockchange", () => { b.style.display = document.pointerLockElement ? "none" : ""; });
   })();
 </script>
 <script>
